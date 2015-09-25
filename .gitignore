@@ -1,0 +1,6 @@
+Studio Edition/zxing-android-demo/.gradle/
+Studio Edition/zxing-android-demo/app/build/
+*.iml
+Studio Edition/zxing-android-demo/.idea/
+Studio Edition/zxing-android-demo/local.properties
+Studio Edition/zxing-android-demo/build/
