@@ -25,6 +25,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,6 +48,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,6 +75,7 @@ import java.text.DateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -78,7 +86,8 @@ import java.util.Map;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback {
+public final class CaptureActivity extends Activity
+        implements SurfaceHolder.Callback, SensorEventListener {
 
     public static final int HISTORY_REQUEST_CODE = 0x0000bacc;
     private static final String TAG = CaptureActivity.class.getSimpleName();
@@ -90,7 +99,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             ResultMetadataType.ISSUE_NUMBER, ResultMetadataType.SUGGESTED_PRICE,
             ResultMetadataType.ERROR_CORRECTION_LEVEL, ResultMetadataType.POSSIBLE_COUNTRY
     );
-
+    SensorManager mSensorManager;
+    BubbleView mBubbleView;
+    int k = 45; //灵敏度
+    MySensorEventListener listener = new MySensorEventListener();
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
     private Result savedResultToShow;
@@ -110,6 +122,149 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
+    private float currentDegree = 0f;
+    private ImageView mImageView_compress_newAPI;
+    private ImageView mImageView_compress;
+    private TextView mTextView_compress;
+    private TextView mTextView_compress_newAPI;
+    private TextView mTextView_horizontal;
+    private final SensorListener mSensorLisener = new SensorListener() {
+
+        @Override
+        public void onAccuracyChanged ( int sensor, int accuracy ) {
+        }
+
+        public boolean isContain ( int x, int y ) {//判断点是否在圆内
+
+            int tempx = ( int ) ( x + mBubbleView.zhongBitmap2.getWidth() / 2.0 );
+            int tempy = ( int ) ( y + mBubbleView.zhongBitmap2.getWidth() / 2.0 );
+            int ox = ( int ) ( mBubbleView.zhong1_X + mBubbleView.zhongBitmap1.getWidth() / 2.0 );
+            int oy = ( int ) ( mBubbleView.zhong1_X + mBubbleView.zhongBitmap1.getWidth() / 2.0 );
+            if ( Math.sqrt( ( tempx - ox ) * ( tempx - ox ) + ( tempy - oy ) * ( tempy - oy ) ) >
+                    ( mBubbleView.zhongBitmap1.getWidth() / 2.0 -
+                            mBubbleView.zhongBitmap2.getWidth() / 2.0 ) ) {
+                //不在圆内
+                return false;
+            }
+            else {
+                //在圆内时
+                return true;
+            }
+        }
+
+        @Override
+        public void onSensorChanged ( int sensor, float[] values ) {
+            if ( sensor == SensorManager.SENSOR_ORIENTATION ) {
+                double pitch = values[ SensorManager.DATA_Y ];
+                double roll = values[ SensorManager.DATA_Z ];
+                int x = 0;
+                int y = 0;//临时变量，算中间水泡坐标时用
+                int tempX = 0;
+                int tempY = 0;//下面气泡的临时变量
+
+                mTextView_horizontal.setText(
+                        "Y:" + values[ SensorManager.DATA_Y ] + "\n" + "Z:" +
+                                values[ SensorManager.DATA_Z ] + "\n" +
+                                "X:" + values[ SensorManager.DATA_X ]
+                );
+                //开始调整x 的值
+                if ( Math.abs( roll ) <= k ) {
+                    mBubbleView.shang2_X = mBubbleView.shang1_X //上面的
+                            + ( int ) ( ( ( mBubbleView.shangBitmap1.getWidth() -
+                            mBubbleView.shangBitmap2.getWidth() ) / 2.0 ) -
+                            ( ( ( mBubbleView.shangBitmap1.getWidth() -
+                                    mBubbleView.shangBitmap2.getWidth() ) / 2.0 ) * roll ) / k );
+
+                    x = mBubbleView.zhong1_X //中间的
+                            + ( int ) ( ( ( mBubbleView.zhongBitmap1.getWidth() -
+                            mBubbleView.zhongBitmap2.getWidth() ) / 2.0 ) -
+                            ( ( ( mBubbleView.zhongBitmap1.getWidth() -
+                                    mBubbleView.zhongBitmap2.getWidth() ) / 2.0 ) * roll ) / k );
+                }
+                else if ( roll > k ) {
+                    mBubbleView.shang2_X = mBubbleView.shang1_X;
+                    x = mBubbleView.zhong1_X;
+                }
+                else {
+                    mBubbleView.shang2_X =
+                            mBubbleView.shang1_X + mBubbleView.shangBitmap1.getWidth() -
+                                    mBubbleView.shangBitmap2.getWidth();
+
+                    x = mBubbleView.zhong1_X + mBubbleView.zhongBitmap1.getWidth() -
+                            mBubbleView.zhongBitmap2.getWidth();
+                }
+
+                //开始调整y 的值
+
+                if ( Math.abs( pitch ) <= k ) {
+                    mBubbleView.zuo2_Y = mBubbleView.zuo1_Y //左面的
+                            + ( int ) ( ( ( mBubbleView.zuoBitmap1.getHeight() -
+                            mBubbleView.zuoBitmap2.getHeight() ) / 2.0 ) +
+                            ( ( ( mBubbleView.zuoBitmap1.getHeight() -
+                                    mBubbleView.zuoBitmap2.getHeight() ) / 2.0 ) * pitch ) / k );
+
+                    y = mBubbleView.zhong1_Y + //中间的
+                            ( int ) ( ( ( mBubbleView.zhongBitmap1.getHeight() -
+                                    mBubbleView.zhongBitmap2.getHeight() ) / 2.0 ) +
+                                    ( ( ( mBubbleView.zhongBitmap1.getHeight() -
+                                            mBubbleView.zhongBitmap2.getHeight() ) / 2.0 ) *
+                                            pitch ) / k );
+                }
+                else if ( pitch > k ) {
+                    mBubbleView.zuo2_Y = mBubbleView.zuo1_Y + mBubbleView.zuoBitmap1.getHeight() -
+                            mBubbleView.zuoBitmap2.getHeight();
+
+                    y = mBubbleView.zhong1_Y + mBubbleView.zhongBitmap1.getHeight() -
+                            mBubbleView.zhongBitmap2.getHeight();
+                }
+                else {
+                    mBubbleView.zuo2_Y = mBubbleView.zuo1_Y;
+                    y = mBubbleView.zhong1_Y;
+                }
+
+                //下面的
+                tempX = - ( int ) ( ( ( mBubbleView.xiaBitmap1.getWidth() / 2 - 28 ) * roll +
+                        ( mBubbleView.xiaBitmap1.getWidth() / 2 - 28 ) * pitch ) / k );
+
+                tempY = - ( int ) ( ( - ( mBubbleView.xiaBitmap1.getWidth() / 2 - 28 ) * roll -
+                        ( mBubbleView.xiaBitmap1.getWidth() / 2 - 28 ) * pitch ) / k );
+
+                //限制下面的气泡范围
+                if ( tempY > mBubbleView.xiaBitmap1.getHeight() / 2 - 28 ) {
+                    tempY = mBubbleView.xiaBitmap1.getHeight() / 2 - 28;
+                }
+                if ( tempY < - mBubbleView.xiaBitmap1.getHeight() / 2 + 28 ) {
+                    tempY = - mBubbleView.xiaBitmap1.getHeight() / 2 + 28;
+                }
+
+                if ( tempX > mBubbleView.xiaBitmap1.getWidth() / 2 - 28 ) {
+                    tempX = mBubbleView.xiaBitmap1.getWidth() / 2 - 28;
+                }
+
+                if ( tempX < - mBubbleView.xiaBitmap1.getWidth() / 2 + 28 ) {
+                    tempX = - mBubbleView.xiaBitmap1.getWidth() / 2 + 28;
+                }
+
+                mBubbleView.xia2_X =
+                        tempX + mBubbleView.xia1_X + mBubbleView.xiaBitmap1.getWidth() / 2 -
+                                mBubbleView.xiaBitmap2.getWidth() / 2;
+                mBubbleView.xia2_Y =
+                        tempY + mBubbleView.xia1_Y + mBubbleView.xiaBitmap1.getHeight() / 2 -
+                                mBubbleView.xiaBitmap2.getWidth() / 2;
+
+                if ( isContain( x, y ) ) {//中间的水泡在圆内才改变坐标
+                    mBubbleView.zhong2_X = x;
+                    mBubbleView.zhong2_Y = y;
+                }
+                mBubbleView.postInvalidate();//重绘
+            }
+        } //传感器监听器类
+        //该处省略了部分代码，将在后面进行介绍
+    };
+    private Sensor accelerometer; // 加速度传感器
+    private Sensor magnetic; // 地磁场传感器
+    private float[] accelerometerValues = new float[ 3 ];
+    private float[] magneticFieldValues = new float[ 3 ];
     private static boolean isZXingURL ( String dataString ) {
         if ( dataString == null ) {
             return false;
@@ -146,17 +301,52 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         Window window = getWindow();
         window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
-        setContentView( R.layout.capture_origin );
-
+        setContentView( R.layout.capture );
+        mImageView_compress = ( ImageView ) findViewById( R.id.image_compress );
+        mImageView_compress_newAPI = ( ImageView ) findViewById( R.id.image_compress_newAPI );
+        mTextView_compress = ( TextView ) findViewById( R.id.text_compress );
+        mTextView_compress_newAPI = ( TextView ) findViewById( R.id.text_compress_newAPI );
+        mTextView_horizontal = ( TextView ) findViewById( R.id.text_horizontal );
+        mBubbleView = ( BubbleView ) findViewById( R.id.bubbleview );
         hasSurface = false;
         inactivityTimer = new InactivityTimer( this );
         beepManager = new BeepManager( this );
         ambientLightManager = new AmbientLightManager( this );
 
         PreferenceManager.setDefaultValues( this, R.xml.preferences, false );
+        mSensorManager = ( SensorManager ) getSystemService( SENSOR_SERVICE );
+        // 初始化加速度传感器
+        accelerometer = mSensorManager.getDefaultSensor( Sensor.TYPE_ACCELEROMETER );
+        // 初始化地磁场传感器
+        magnetic = mSensorManager.getDefaultSensor( Sensor.TYPE_MAGNETIC_FIELD );
+
     }
     @Override
     protected void onResume () {
+        mSensorManager.registerListener(
+                this, mSensorManager.getDefaultSensor( Sensor.TYPE_ORIENTATION ),
+                SensorManager.SENSOR_DELAY_FASTEST
+        );
+        List< Sensor > sensors = mSensorManager.getSensorList( Sensor.TYPE_ORIENTATION );
+
+        if ( sensors.size() > 0 ) {
+            Sensor sensor = sensors.get( 0 );
+            //注册SensorManager
+            //this->接收sensor的实例
+            //接收传感器类型的列表
+            //接受的频率
+            mSensorManager.registerListener( this, sensor, SensorManager.SENSOR_DELAY_FASTEST );
+        }
+
+        // 注册监听
+        mSensorManager.registerListener(
+                listener, accelerometer, Sensor.TYPE_ACCELEROMETER
+        );
+        mSensorManager.registerListener(
+                listener, magnetic, Sensor.TYPE_MAGNETIC_FIELD
+        );
+        mSensorManager.registerListener( mSensorLisener, SensorManager.SENSOR_ORIENTATION );
+
         super.onResume();
 
         // historyManager must be initialized here to update the history preference
@@ -186,7 +376,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         else {
             setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE );
         }
-
         resetStatusView();
 
         beepManager.updatePrefs();
@@ -312,6 +501,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             SurfaceHolder surfaceHolder = surfaceView.getHolder();
             surfaceHolder.removeCallback( this );
         }
+        mSensorManager.unregisterListener( listener );
+        mSensorManager.unregisterListener( mSensorLisener );
+        ;
         super.onPause();
     }
     @Override
@@ -611,7 +803,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
 
     }
-
     // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
     private void handleDecodeExternally (
             Result rawResult, ResultHandler resultHandler, Bitmap barcode
@@ -711,7 +902,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
         }
     }
-
     private void sendReplyMessage ( int id, Object arg, long delayMS ) {
         if ( handler != null ) {
             Message message = Message.obtain( handler, id, arg );
@@ -723,7 +913,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             }
         }
     }
-
     private void initCamera ( SurfaceHolder surfaceHolder ) {
         if ( surfaceHolder == null ) {
             throw new IllegalStateException( "No SurfaceHolder provided" );
@@ -753,7 +942,6 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             displayFrameworkBugMessageAndExit();
         }
     }
-
     private void displayFrameworkBugMessageAndExit () {
         AlertDialog.Builder builder = new AlertDialog.Builder( this );
         builder.setTitle( getString( R.string.app_name ) );
@@ -762,14 +950,12 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         builder.setOnCancelListener( new FinishListener( this ) );
         builder.show();
     }
-
     public void restartPreviewAfterDelay ( long delayMS ) {
         if ( handler != null ) {
             handler.sendEmptyMessageDelayed( R.id.restart_preview, delayMS );
         }
         resetStatusView();
     }
-
     private void resetStatusView () {
         resultView.setVisibility( View.GONE );
         statusView.setText( R.string.msg_default_status );
@@ -777,8 +963,97 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         viewfinderView.setVisibility( View.VISIBLE );
         lastResult = null;
     }
-
     public void drawViewfinder () {
         viewfinderView.drawViewfinder();
+    }
+    @Override
+    public void onSensorChanged ( SensorEvent event ) {
+        switch (event.sensor.getType()) {
+            case Sensor.TYPE_ORIENTATION:
+                float degree = event.values[ SensorManager.DATA_X ];
+                RotateAnimation ra = new RotateAnimation(
+                        currentDegree, - degree, Animation.RELATIVE_TO_SELF, 0.5f,
+                        Animation.RELATIVE_TO_SELF, 0.5f
+                );
+                ra.setDuration( 200 );
+                //                mImageView_compress.startAnimation( ra );
+                mImageView_compress.setRotation( - degree );
+                mTextView_compress.setText(
+                        "X:" + degree + "\n\n" + "Y:" +
+                                event.values[ SensorManager.DATA_Y ] + "\n" + "Z:" +
+                                event.values[ SensorManager.DATA_Z ]
+                );
+                currentDegree = - degree;
+                break;
+        }
+    }
+    @Override
+    public void onAccuracyChanged ( Sensor sensor, int accuracy ) {
+
+    }
+    @Override
+    protected void onStop () {
+        mSensorManager.unregisterListener( this );
+        super.onStop();
+    }
+    // 计算方向
+    private void calculateOrientation () {
+        float[] values = new float[ 3 ];
+        float[] R = new float[ 9 ];
+        SensorManager.getRotationMatrix(
+                R, null, accelerometerValues, magneticFieldValues
+        );
+        SensorManager.getOrientation( R, values );
+        values[ 0 ] = ( float ) Math.toDegrees( values[ 0 ] );
+        mImageView_compress_newAPI.setRotation( - values[ 0 ] );
+        mTextView_compress_newAPI.setText(
+                "X:" + values[ 0 ] + "\n\n" + "Y:" + values[ 1 ] + "\n" + "Z:" + values[ 2 ]
+        );
+        Log.i( TAG, values[ 0 ] + "" );
+        if ( values[ 0 ] >= - 5 && values[ 0 ] < 5 ) {
+        }
+        else if ( values[ 0 ] >= 5 && values[ 0 ] < 85 ) {
+            Log.i( TAG, "东北" );
+        }
+        else if ( values[ 0 ] >= 85 && values[ 0 ] <= 95 ) {
+            Log.i( TAG, "正东" );
+        }
+        else if ( values[ 0 ] >= 95 && values[ 0 ] < 175 ) {
+            Log.i( TAG, "东南" );
+        }
+        else if ( ( values[ 0 ] >= 175 && values[ 0 ] <= 180 ) ||
+                ( values[ 0 ] ) >= - 180 && values[ 0 ] < - 175 ) {
+            Log.i( TAG, "正南" );
+        }
+        else if ( values[ 0 ] >= - 175 && values[ 0 ] < - 95 ) {
+            Log.i( TAG, "西南" );
+        }
+        else if ( values[ 0 ] >= - 95 && values[ 0 ] < - 85 ) {
+            Log.i( TAG, "正西" );
+        }
+        else if ( values[ 0 ] >= - 85 && values[ 0 ] < - 5 ) {
+            Log.i( TAG, "西北" );
+        }
+    }
+
+    class MySensorEventListener implements SensorEventListener {
+        @Override
+        public void onSensorChanged ( SensorEvent event ) {
+            // TODO Auto-generated method stub
+            if ( event.sensor.getType() == Sensor.TYPE_ACCELEROMETER ) {
+                accelerometerValues = event.values;
+            }
+            if ( event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD ) {
+                magneticFieldValues = event.values;
+            }
+            calculateOrientation();
+        }
+
+        @Override
+        public void onAccuracyChanged ( Sensor sensor, int accuracy ) {
+            // TODO Auto-generated method stub
+
+        }
+
     }
 }

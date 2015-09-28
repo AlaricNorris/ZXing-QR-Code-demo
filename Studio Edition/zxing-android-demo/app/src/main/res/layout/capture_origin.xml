@@ -18,70 +18,20 @@
 	   xmlns:tools = "http://schemas.android.com/tools">
 
 	<FrameLayout
+
 		android:layout_width = "match_parent"
 		android:layout_height = "match_parent"
-		android:background = "#555555">
-
-		<LinearLayout
-			android:layout_width = "wrap_content"
-			android:layout_height = "wrap_content"
-			android:layout_gravity = "right|center_vertical"
-			android:layout_marginBottom = "20dp"
-			android:gravity = "right">
-
-			<com.google.zxing.client.android.BubbleView
-				android:id = "@+id/bubbleview"
-				android:layout_width = "200dp"
-				android:layout_height = "200dp"
-				android:orientation = "vertical">
-			</com.google.zxing.client.android.BubbleView>
-
-			<TextView
-				android:id = "@+id/text_horizontal"
-				android:layout_width = "80dp"
-				android:layout_height = "wrap_content"
-				android:textColor = "@android:color/black"/>
-		</LinearLayout>
-
-		<LinearLayout
-			android:layout_width = "match_parent"
-			android:layout_height = "wrap_content"
-			android:layout_gravity = "bottom">
-
-			<ImageView
-				android:id = "@+id/image_compress"
-				android:layout_width = "wrap_content"
-				android:layout_height = "wrap_content"
-				android:src = "@mipmap/ic_compress"/>
-
-			<TextView
-				android:id = "@+id/text_compress"
-				android:layout_width = "100dp"
-				android:layout_height = "match_parent"
-				android:textColor = "@android:color/black"/>
-
-			<ImageView
-				android:id = "@+id/image_compress_newAPI"
-				android:layout_width = "wrap_content"
-				android:layout_height = "wrap_content"
-				android:src = "@mipmap/ic_compress"/>
-
-			<TextView
-				android:id = "@+id/text_compress_newAPI"
-				android:layout_width = "wrap_content"
-				android:layout_height = "wrap_content"
-				android:textColor = "@android:color/black"/>
-		</LinearLayout>
+		android:background = "@android:color/white">
 
 		<SurfaceView
 			android:id = "@+id/preview_view"
-			android:layout_width = "224dp"
-			android:layout_height = "126dp"/>
+			android:layout_width = "match_parent"
+			android:layout_height = "match_parent"/>
 
 		<com.google.zxing.client.android.ViewfinderView
 			android:id = "@+id/viewfinder_view"
-			android:layout_width = "1dp"
-			android:layout_height = "1dp"/>
+			android:layout_width = "match_parent"
+			android:layout_height = "match_parent"/>
 
 		<LinearLayout
 			android:id = "@+id/result_view"
