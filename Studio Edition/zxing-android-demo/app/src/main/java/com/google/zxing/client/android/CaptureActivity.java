@@ -54,6 +54,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alaric.norris.aars.crashhelper.CrashHandler;
+import com.alaric.norris.aars.crashhelper.CustomCrashHandler;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
@@ -298,7 +300,6 @@ public final class CaptureActivity extends Activity
     @Override
     public void onCreate ( Bundle icicle ) {
         super.onCreate( icicle );
-
         Window window = getWindow();
         window.addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
         setContentView( R.layout.capture );
