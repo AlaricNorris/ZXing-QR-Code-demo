@@ -27,6 +27,7 @@
 			android:layout_height = "wrap_content"
 			android:layout_gravity = "right|center_vertical"
 			android:layout_marginBottom = "20dp"
+			android:visibility="gone"
 			android:gravity = "right">
 
 			<com.google.zxing.client.android.BubbleView
@@ -46,6 +47,7 @@
 		<LinearLayout
 			android:layout_width = "match_parent"
 			android:layout_height = "wrap_content"
+			android:visibility="gone"
 			android:layout_gravity = "bottom">
 
 			<ImageView

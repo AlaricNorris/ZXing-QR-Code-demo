@@ -754,8 +754,8 @@ public final class CaptureActivity extends Activity
 
         TextView formatTextView = (TextView) findViewById(R.id.format_text_view);
         formatTextView.setText(rawResult.getBarcodeFormat().toString());
-        if (orientation<0)
-            orientation+=360;
+        if (orientation < 0)
+            orientation += 360;
         formatTextView.setText(":" + orientation);
         TextView typeTextView = (TextView) findViewById(R.id.type_text_view);
         typeTextView.setText(resultHandler.getType().toString());
@@ -793,7 +793,7 @@ public final class CaptureActivity extends Activity
 
         TextView supplementTextView =
                 (TextView) findViewById(R.id.contents_supplement_text_view);
-        supplementTextView.setText(""+tiltAngle);
+        supplementTextView.setText("" + tiltAngle);
         supplementTextView.setOnClickListener(null);
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(
                 PreferencesActivity.KEY_SUPPLEMENTAL, true
@@ -816,6 +816,11 @@ public final class CaptureActivity extends Activity
                 button.setVisibility(View.GONE);
             }
         }
+        // TODO 将数据传出 调用接口等
+        Toast.makeText(getApplicationContext(), "orientation:" + orientation + "\ndistance:" + calculateDistance(tiltAngle) + "\noffset:" + calculateOffsets(tiltAngle), 0)
+                .show();
+        Log.d("nrs", "orientation:" + orientation + "\ndistance:" + calculateDistance(tiltAngle) + "\noffset:" + calculateOffsets(tiltAngle))
+        ;
     }
 
 
@@ -847,7 +852,7 @@ public final class CaptureActivity extends Activity
         if (negativeOffset < 0)
             return Math.abs(defaultdistance - positive);
         Log.i("nrs", "defaultdistance" + defaultdistance);
-        return Math.min(Math.abs(defaultdistance - positive), Math.abs(defaultdistance - negative)) ;
+        return Math.min(Math.abs(defaultdistance - positive), Math.abs(defaultdistance - negative));
     }
 
     // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
