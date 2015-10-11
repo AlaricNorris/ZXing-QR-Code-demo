@@ -80,8 +80,8 @@
 
 		<com.google.zxing.client.android.ViewfinderView
 			android:id = "@+id/viewfinder_view"
-			android:layout_width = "1dp"
-			android:layout_height = "1dp"/>
+			android:layout_width = "224dp"
+			android:layout_height = "126dp"/>
 
 		<LinearLayout
 			android:id = "@+id/result_view"
@@ -126,7 +126,7 @@
 							android:layout_width = "wrap_content"
 							android:layout_height = "wrap_content"
 							android:paddingRight = "@dimen/half_padding"
-							android:text = "@string/msg_default_format"
+							android:text = "orientation"
 							android:textColor = "@color/result_minor_text"
 							android:textStyle = "bold"/>
 
@@ -190,12 +190,32 @@
 							android:layout_width = "wrap_content"
 							android:layout_height = "wrap_content"
 							android:paddingRight = "@dimen/half_padding"
-							android:text = "@string/msg_default_meta"
+							android:text = "distance"
 							android:textColor = "@color/result_minor_text"
 							android:textStyle = "bold"/>
 
 						<TextView
 							android:id = "@+id/meta_text_view"
+							android:layout_width = "wrap_content"
+							android:layout_height = "wrap_content"
+							android:textColor = "@color/result_minor_text"/>
+
+					</LinearLayout>
+					<LinearLayout
+						android:layout_width = "wrap_content"
+						android:layout_height = "wrap_content"
+						android:orientation = "horizontal">
+
+						<TextView
+							android:layout_width = "wrap_content"
+							android:layout_height = "wrap_content"
+							android:paddingRight = "@dimen/half_padding"
+							android:text = "offset"
+							android:textColor = "@color/result_minor_text"
+							android:textStyle = "bold"/>
+
+						<TextView
+							android:id = "@+id/offset_text_view"
 							android:layout_width = "wrap_content"
 							android:layout_height = "wrap_content"
 							android:textColor = "@color/result_minor_text"/>

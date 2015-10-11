@@ -77,6 +77,9 @@ public final class ViewfinderView extends View {
         this.cameraManager = cameraManager;
     }
 
+    Rect scaledFrame = null
+            ;
+
     @SuppressLint ( "DrawAllocation" )
     @Override
     public void onDraw ( Canvas canvas ) {
@@ -84,19 +87,31 @@ public final class ViewfinderView extends View {
             return; // not ready yet, early draw before done configuring
         }
         Rect frame = cameraManager.getFramingRect();
+        if (scaledFrame==null) {
+            scaledFrame = new Rect(frame.top*10/28,frame.left*10/28,frame.right*10/28,frame.bottom*10/28);
+        }
         Rect previewFrame = cameraManager.getFramingRectInPreview();
         if ( frame == null || previewFrame == null ) {
             return;
         }
         int width = canvas.getWidth();
         int height = canvas.getHeight();
+        int scaledWidth = width*10/14/2;
+        int scaledHeight = height*10/14/2;
+
 
         // Draw the exterior (i.e. outside the framing rect) darkened
         paint.setColor( resultBitmap != null ? resultColor : maskColor );
-        canvas.drawRect( 0, 0, width, frame.top, paint );
-        canvas.drawRect( 0, frame.top, frame.left, frame.bottom + 1, paint );
-        canvas.drawRect( frame.right + 1, frame.top, width, frame.bottom + 1, paint );
-        canvas.drawRect( 0, frame.bottom + 1, width, height, paint );
+//        canvas.drawRect( 0, 0, width, frame.top, paint );
+//        canvas.drawRect( 0, frame.top, frame.left, frame.bottom + 1, paint );
+//        canvas.drawRect( frame.right + 1, frame.top, width, frame.bottom + 1, paint );
+//        canvas.drawRect( 0, frame.bottom + 1, width, height, paint );
+
+        canvas.drawRect( 0, 0, width, scaledFrame.top, paint );
+        canvas.drawRect( 0, scaledFrame.top, scaledFrame.left, scaledFrame.bottom + 1, paint );
+        canvas.drawRect( scaledFrame.right + 1, scaledFrame.top, width, scaledFrame.bottom + 1, paint );
+        canvas.drawRect( 0, scaledFrame.bottom + 1, width, height, paint );
+
 
         if ( resultBitmap != null ) {
             // Draw the opaque result bitmap over the scanning rectangle
@@ -109,19 +124,19 @@ public final class ViewfinderView extends View {
             paint.setColor( laserColor );
             paint.setAlpha( SCANNER_ALPHA[ scannerAlpha ] );
             scannerAlpha = ( scannerAlpha + 1 ) % SCANNER_ALPHA.length;
-            int middle = frame.height() / 2 + frame.top;
-            canvas.drawRect( frame.left + 2, middle - 1, frame.right - 1, middle + 2, paint );
+            int middle = scaledFrame.height() / 2 + scaledFrame.top;
+            canvas.drawRect( scaledFrame.left + 2, middle - 1, scaledFrame.right - 1, middle + 2, paint );
 
             //绘制中间的线,每次刷新界面，中间的线往下移动SPEEN_DISTANCE
             if ( slideTop == 0 )
                 slideTop = middle;
             slideTop += 5;
-            if ( slideTop >= frame.bottom ) {
-                slideTop = frame.top;
+            if ( slideTop >= scaledFrame.bottom ) {
+                slideTop = scaledFrame.top;
             }
             //            canvas.drawRect( frame.left + 2, slideTop - 1, frame.right - 1, slideTop + 2, paint );
             canvas.drawRect(
-                    frame.left + 5, slideTop - 6 / 2, frame.right - 5, slideTop + 6 / 2, paint
+                    scaledFrame.left + 5, slideTop - 6 / 2, scaledFrame.right - 5, slideTop + 6 / 2, paint
             );
 
             float scaleX = frame.width() / ( float ) previewFrame.width();
