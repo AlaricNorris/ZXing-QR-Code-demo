@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 /**
  *  ClassName:  CustomMap
@@ -69,6 +70,11 @@ public class CustomMapView extends View {
         mPaint_Light.setStrokeWidth( 1 );
         mPaint_Window = new Paint();
         mPaint_Window.setColor( Color.BLUE );
+
+        Log.d( "nrs", mRect1.centerX() + "|" + mRect1.centerY() );
+        Log.d( "nrs", mRect2.centerX() + "|" + mRect2.centerY() );
+        Log.d( "nrs", mRect3.centerX() + "|" + mRect3.centerY() );
+        Log.d( "nrs", mRect4.centerX() + "|" + mRect4.centerY() );
     }
     @Override
     protected void onDraw ( Canvas canvas ) {

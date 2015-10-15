@@ -783,7 +783,7 @@ public final class CaptureActivity extends Activity
                 metaTextViewLabel.setVisibility(View.VISIBLE);
             }
         }
-        metaTextView.setText(":" + calculateDistance(tiltAngle));
+        metaTextView.append(":" + calculateDistance(tiltAngle));
         TextView offsetTextView = (TextView) findViewById(R.id.offset_text_view);
         offsetTextView.setText(":" + calculateOffsets(tiltAngle));
         TextView contentsTextView = (TextView) findViewById(R.id.contents_text_view);
