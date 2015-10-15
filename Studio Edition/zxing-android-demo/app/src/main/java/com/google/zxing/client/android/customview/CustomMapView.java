@@ -132,4 +132,15 @@ public class CustomMapView extends View {
 
     public void updateLocation ( int index, double orientation, double distance, double offset ) {
     }
+    public void updateLocation (
+            int x, int y, double orientation, double distance, double offset
+    ) {
+    }
+    public void updateLocation (
+            int index, int x, int y, double orientation, double distance, double offset
+    ) {
+
+
+
+    }
 }
