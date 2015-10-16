@@ -109,10 +109,8 @@ final class DecodeHandler extends Handler {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        Log.i("nrs","fOut"+fOut)
-                ;
-        Log.i("nrs","mBitmap"+mBitmap)
-                ;
+//        Log.i("nrs","fOut"+fOut);
+//        Log.i( "nrs", "mBitmap" + mBitmap );
         mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fOut);
         try {
             fOut.flush();
@@ -134,16 +132,15 @@ final class DecodeHandler extends Handler {
      * @param height The height of the preview frame.
      */
     private void decode(byte[] data, int width, int height) {
-        Log.i("nrs", "DecodeHandler:decode");
-        Log.i("nrs", "DecodeHandler:data" + data.toString());
-        writeImageToDisk(data, "YUV.txt");
-        try {
-            saveMyBitmap("YUV",
-                    BitmapFactory.decodeByteArray(data,0,data.length));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        ;
+//        Log.i("nrs", "DecodeHandler:decode");
+//        Log.i("nrs", "DecodeHandler:data" + data.toString());
+//        writeImageToDisk(data, "YUV.txt");
+//        try {
+//            saveMyBitmap("YUV",
+//                    BitmapFactory.decodeByteArray(data,0,data.length));
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
         long start = System.currentTimeMillis();
         Result rawResult = null;
         PlanarYUVLuminanceSource source =

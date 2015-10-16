@@ -44,8 +44,10 @@ public class CustomMapView extends View {
     private Paint mPaint_Floor = new Paint();
     private Paint mPaint_Light = new Paint();
     private Paint mPaint_Window = new Paint();
+    private Paint mPaint_User = new Paint();
     private int Coordinate_X = 30 * peiceSpace;
     private int Coordinate_Y = 390 * peiceSpace;
+    private UserLocation mLocation = new UserLocation( 60, 200, 5 );
     public CustomMapView ( Context context, AttributeSet attrs, int defStyleAttr ) {
         super( context, attrs, defStyleAttr );
         init();
@@ -71,6 +73,9 @@ public class CustomMapView extends View {
         mPaint_Window = new Paint();
         mPaint_Window.setColor( Color.BLUE );
 
+        mPaint_User = new Paint();
+        mPaint_User.setColor( Color.CYAN );
+        mPaint_User.setStrokeWidth( 1 );
         Log.d( "nrs", mRect1.centerX() + "|" + mRect1.centerY() );
         Log.d( "nrs", mRect2.centerX() + "|" + mRect2.centerY() );
         Log.d( "nrs", mRect3.centerX() + "|" + mRect3.centerY() );
@@ -81,7 +86,6 @@ public class CustomMapView extends View {
         super.onDraw( canvas );
         if ( isInEditMode() )
             return;
-        canvas.drawColor( Color.LTGRAY );
         drawMapTile( canvas );
         drawLights( canvas );
         drawDoor( canvas );
@@ -94,6 +98,12 @@ public class CustomMapView extends View {
         canvas.drawLine( 0, 100, 750, 100, paint );
     }
     private void drawLocation ( Canvas canvas ) {
+        if ( mLocation == null )
+            return;
+        canvas.drawCircle(
+                mLocation.getX(), mLocation.getY(), mLocation.getRadius(), mPaint_User
+        );
+        Log.i( "nrs", mLocation.getX() + "," + mLocation.getY() + "-" + mLocation.getRadius() );
 
     }
     private void drawWindow ( Canvas canvas ) {
@@ -129,7 +139,6 @@ public class CustomMapView extends View {
     protected void onMeasure ( int widthMeasureSpec, int heightMeasureSpec ) {
         super.onMeasure( widthMeasureSpec, heightMeasureSpec );
     }
-
     public void updateLocation ( int index, double orientation, double distance, double offset ) {
     }
     public void updateLocation (
@@ -139,8 +148,15 @@ public class CustomMapView extends View {
     public void updateLocation (
             int index, int x, int y, double orientation, double distance, double offset
     ) {
-
-
-
+        int newX = ( int ) ( x + distance * Math.sin( Math.toRadians(  orientation ) ) );
+        int newY = ( int ) ( y + distance * Math.cos( Math.toRadians(  orientation ) ) );
+        Log.e( "nrs", "newX" + newX );
+        Log.e( "nrs", "newY" + newY );
+        if ( mLocation == null )
+            mLocation = new UserLocation();
+        mLocation.setRadius( ( int ) offset );
+        mLocation.setX( newX );
+        mLocation.setY( newY );
+        postInvalidate();
     }
 }
