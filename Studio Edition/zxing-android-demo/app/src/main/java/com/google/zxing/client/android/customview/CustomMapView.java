@@ -45,6 +45,7 @@ public class CustomMapView extends View {
     private Paint mPaint_Light = new Paint();
     private Paint mPaint_Window = new Paint();
     private Paint mPaint_User = new Paint();
+    private Paint mPaint_Center = new Paint();
     private int Coordinate_X = 30 * peiceSpace;
     private int Coordinate_Y = 390 * peiceSpace;
     private UserLocation mLocation = new UserLocation( 60, 200, 5 );
@@ -64,18 +65,21 @@ public class CustomMapView extends View {
         mPaint_Floor.setColor( Color.GRAY );
         mPaint_Floor.setStrokeJoin( Paint.Join.ROUND );
         mPaint_Floor.setStrokeCap( Paint.Cap.ROUND );
-        mPaint_Floor.setStrokeWidth( 1 );
+        mPaint_Floor.setStrokeWidth(1);
         mPaint_Light = new Paint();
-        mPaint_Light.setColor( Color.WHITE );
-        mPaint_Light.setStrokeJoin( Paint.Join.ROUND );
+        mPaint_Light.setColor(Color.WHITE);
+        mPaint_Light.setStrokeJoin(Paint.Join.ROUND);
         mPaint_Light.setStrokeCap( Paint.Cap.ROUND );
-        mPaint_Light.setStrokeWidth( 1 );
+        mPaint_Light.setStrokeWidth(1);
         mPaint_Window = new Paint();
-        mPaint_Window.setColor( Color.BLUE );
+        mPaint_Window.setColor(Color.BLUE);
 
         mPaint_User = new Paint();
-        mPaint_User.setColor( Color.CYAN );
-        mPaint_User.setStrokeWidth( 1 );
+        mPaint_User.setColor( Color.RED );
+        mPaint_User.setStrokeWidth(1);
+        mPaint_Center = new Paint();
+        mPaint_Center.setColor( Color.BLUE );
+        mPaint_Center.setStrokeWidth( 1 );
         Log.d( "nrs", mRect1.centerX() + "|" + mRect1.centerY() );
         Log.d( "nrs", mRect2.centerX() + "|" + mRect2.centerY() );
         Log.d( "nrs", mRect3.centerX() + "|" + mRect3.centerY() );
@@ -83,19 +87,17 @@ public class CustomMapView extends View {
     }
     @Override
     protected void onDraw ( Canvas canvas ) {
-        super.onDraw( canvas );
+        super.onDraw(canvas );
         if ( isInEditMode() )
             return;
-        drawMapTile( canvas );
-        drawLights( canvas );
-        drawDoor( canvas );
-        drawWindow( canvas );
-        drawLocation( canvas );
+        drawMapTile(canvas );
+        drawLights(canvas );
+        drawDoor(canvas );
+        drawWindow(canvas );
+        drawLocation(canvas );
         Paint paint = new Paint();
-        paint.setColor( Color.RED );
-        paint.setStrokeWidth( 4 );
-        canvas.drawLine( 0, 700, 750, 700, paint );
-        canvas.drawLine( 0, 100, 750, 100, paint );
+        paint.setColor(Color.RED );
+        paint.setStrokeWidth(4 );
     }
     private void drawLocation ( Canvas canvas ) {
         if ( mLocation == null )
@@ -103,11 +105,14 @@ public class CustomMapView extends View {
         canvas.drawCircle(
                 mLocation.getX(), mLocation.getY(), mLocation.getRadius(), mPaint_User
         );
+        canvas.drawCircle(
+                mLocation.getX(), mLocation.getY(), 2, mPaint_Center
+        );
         Log.i( "nrs", mLocation.getX() + "," + mLocation.getY() + "-" + mLocation.getRadius() );
 
     }
     private void drawWindow ( Canvas canvas ) {
-        canvas.drawRect( new Rect( 150 * peiceSpace, 0, 220 * peiceSpace, 5 ), mPaint_Light );
+        canvas.drawRect( new Rect( 150 * peiceSpace, 0, 220 * peiceSpace, 5 ), mPaint_Window );
 
     }
     private void drawDoor ( Canvas canvas ) {
