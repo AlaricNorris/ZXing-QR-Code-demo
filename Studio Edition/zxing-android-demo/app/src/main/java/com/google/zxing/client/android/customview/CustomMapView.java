@@ -65,18 +65,18 @@ public class CustomMapView extends View {
         mPaint_Floor.setColor( Color.GRAY );
         mPaint_Floor.setStrokeJoin( Paint.Join.ROUND );
         mPaint_Floor.setStrokeCap( Paint.Cap.ROUND );
-        mPaint_Floor.setStrokeWidth(1);
+        mPaint_Floor.setStrokeWidth( 1 );
         mPaint_Light = new Paint();
-        mPaint_Light.setColor(Color.WHITE);
-        mPaint_Light.setStrokeJoin(Paint.Join.ROUND);
+        mPaint_Light.setColor( Color.WHITE );
+        mPaint_Light.setStrokeJoin( Paint.Join.ROUND );
         mPaint_Light.setStrokeCap( Paint.Cap.ROUND );
-        mPaint_Light.setStrokeWidth(1);
+        mPaint_Light.setStrokeWidth( 1 );
         mPaint_Window = new Paint();
-        mPaint_Window.setColor(Color.BLUE);
+        mPaint_Window.setColor( Color.BLUE );
 
         mPaint_User = new Paint();
         mPaint_User.setColor( Color.RED );
-        mPaint_User.setStrokeWidth(1);
+        mPaint_User.setStrokeWidth( 1 );
         mPaint_Center = new Paint();
         mPaint_Center.setColor( Color.BLUE );
         mPaint_Center.setStrokeWidth( 1 );
@@ -87,17 +87,17 @@ public class CustomMapView extends View {
     }
     @Override
     protected void onDraw ( Canvas canvas ) {
-        super.onDraw(canvas );
+        super.onDraw( canvas );
         if ( isInEditMode() )
             return;
-        drawMapTile(canvas );
-        drawLights(canvas );
-        drawDoor(canvas );
-        drawWindow(canvas );
-        drawLocation(canvas );
+        drawMapTile( canvas );
+        drawLights( canvas );
+        drawDoor( canvas );
+        drawWindow( canvas );
+        drawLocation( canvas );
         Paint paint = new Paint();
-        paint.setColor(Color.RED );
-        paint.setStrokeWidth(4 );
+        paint.setColor( Color.RED );
+        paint.setStrokeWidth( 4 );
     }
     private void drawLocation ( Canvas canvas ) {
         if ( mLocation == null )
@@ -153,13 +153,15 @@ public class CustomMapView extends View {
     public void updateLocation (
             int index, int x, int y, double orientation, double distance, double offset
     ) {
-        int newX = ( int ) ( x + distance * Math.sin( Math.toRadians(  orientation ) ) );
-        int newY = ( int ) ( y + distance * Math.cos( Math.toRadians(  orientation ) ) );
+        int newX = ( int ) ( x +
+                peiceSpace * distance * Math.sin( Math.toRadians( orientation - 90 ) ) );
+        int newY = ( int ) ( y +
+                peiceSpace * distance * Math.cos( Math.toRadians( orientation - 90 ) ) );
         Log.e( "nrs", "newX" + newX );
         Log.e( "nrs", "newY" + newY );
         if ( mLocation == null )
             mLocation = new UserLocation();
-        mLocation.setRadius( ( int ) offset );
+        mLocation.setRadius( peiceSpace * ( int ) offset );
         mLocation.setX( newX );
         mLocation.setY( newY );
         postInvalidate();

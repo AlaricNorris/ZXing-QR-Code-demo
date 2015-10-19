@@ -54,6 +54,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
@@ -810,6 +811,7 @@ public final class CaptureActivity extends Activity
         View metaTextViewLabel = findViewById( R.id.meta_text_view_label );
         metaTextView.setVisibility( View.GONE );
         metaTextViewLabel.setVisibility( View.GONE );
+        LightLocation mLightLocation = null;
         Map< ResultMetadataType, Object > metadata = rawResult.getResultMetadata();
         if ( metadata != null ) {
             StringBuilder metadataText = new StringBuilder( 20 );
@@ -824,6 +826,9 @@ public final class CaptureActivity extends Activity
                 metaTextView.setVisibility( View.VISIBLE );
                 metaTextViewLabel.setVisibility( View.VISIBLE );
             }
+            mLightLocation = new Gson().fromJson(
+                    String.valueOf( metadataText ), LightLocation.class
+            );
         }
         metaTextView.append( ":" + calculateDistance( tiltAngle ) );
         TextView offsetTextView = ( TextView ) findViewById( R.id.offset_text_view );
@@ -870,7 +875,16 @@ public final class CaptureActivity extends Activity
                 "orientation:" + orientation + "\ndistance:" + calculateDistance( tiltAngle ) +
                         "\noffset:" + calculateOffsets( tiltAngle )
         );
-        mMapView.updateLocation( 1,279,171,orientation,calculateDistance( tiltAngle ),calculateOffsets( tiltAngle ) );
+        if ( mLightLocation != null )
+            mMapView.updateLocation(
+                    mLightLocation.getID(), mLightLocation.getX(), mLightLocation.getY(),
+                    orientation, calculateDistance( tiltAngle ), calculateOffsets( tiltAngle )
+            );
+        else
+            mMapView.updateLocation(
+                    1, 279, 171, orientation, calculateDistance( tiltAngle ),
+                    calculateOffsets( tiltAngle )
+            );
     }
     // Briefly show the contents of the barcode, then handle the result outside Barcode Scanner.
     private void handleDecodeExternally (
