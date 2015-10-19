@@ -826,8 +826,9 @@ public final class CaptureActivity extends Activity
                 metaTextView.setVisibility( View.VISIBLE );
                 metaTextViewLabel.setVisibility( View.VISIBLE );
             }
+            Log.d( "nrs", "metadataText: " + displayContents );
             mLightLocation = new Gson().fromJson(
-                    String.valueOf( metadataText ), LightLocation.class
+                    String.valueOf( displayContents ), LightLocation.class
             );
         }
         metaTextView.append( ":" + calculateDistance( tiltAngle ) );
