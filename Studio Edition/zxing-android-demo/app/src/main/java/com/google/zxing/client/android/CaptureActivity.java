@@ -797,8 +797,8 @@ public final class CaptureActivity extends Activity
 
         TextView formatTextView = ( TextView ) findViewById( R.id.format_text_view );
         formatTextView.setText( rawResult.getBarcodeFormat().toString() );
-        if ( orientation < 0 )
-            orientation += 360;
+//        if ( orientation < 0 )
+//            orientation += 360;
         formatTextView.setText( ":" + orientation );
         TextView typeTextView = ( TextView ) findViewById( R.id.type_text_view );
         typeTextView.setText( resultHandler.getType().toString() );
@@ -1102,31 +1102,31 @@ public final class CaptureActivity extends Activity
         mTextView_compress_newAPI.setText(
                 "X:" + values[ 0 ] + "\n\n" + "Y:" + values[ 1 ] + "\n" + "Z:" + values[ 2 ]
         );
-        Log.i( TAG, values[ 0 ] + "" );
-        if ( values[ 0 ] >= - 5 && values[ 0 ] < 5 ) {
-        }
-        else if ( values[ 0 ] >= 5 && values[ 0 ] < 85 ) {
-            Log.i( TAG, "东北" );
-        }
-        else if ( values[ 0 ] >= 85 && values[ 0 ] <= 95 ) {
-            Log.i( TAG, "正东" );
-        }
-        else if ( values[ 0 ] >= 95 && values[ 0 ] < 175 ) {
-            Log.i( TAG, "东南" );
-        }
-        else if ( ( values[ 0 ] >= 175 && values[ 0 ] <= 180 ) ||
-                ( values[ 0 ] ) >= - 180 && values[ 0 ] < - 175 ) {
-            Log.i( TAG, "正南" );
-        }
-        else if ( values[ 0 ] >= - 175 && values[ 0 ] < - 95 ) {
-            Log.i( TAG, "西南" );
-        }
-        else if ( values[ 0 ] >= - 95 && values[ 0 ] < - 85 ) {
-            Log.i( TAG, "正西" );
-        }
-        else if ( values[ 0 ] >= - 85 && values[ 0 ] < - 5 ) {
-            Log.i( TAG, "西北" );
-        }
+        Log.i( TAG, values[ 0 ] + "orientation" );
+//        if ( values[ 0 ] >= - 5 && values[ 0 ] < 5 ) {
+//        }
+//        else if ( values[ 0 ] >= 5 && values[ 0 ] < 85 ) {
+//            Log.i( TAG, "东北" );
+//        }
+//        else if ( values[ 0 ] >= 85 && values[ 0 ] <= 95 ) {
+//            Log.i( TAG, "正东" );
+//        }
+//        else if ( values[ 0 ] >= 95 && values[ 0 ] < 175 ) {
+//            Log.i( TAG, "东南" );
+//        }
+//        else if ( ( values[ 0 ] >= 175 && values[ 0 ] <= 180 ) ||
+//                ( values[ 0 ] ) >= - 180 && values[ 0 ] < - 175 ) {
+//            Log.i( TAG, "正南" );
+//        }
+//        else if ( values[ 0 ] >= - 175 && values[ 0 ] < - 95 ) {
+//            Log.i( TAG, "西南" );
+//        }
+//        else if ( values[ 0 ] >= - 95 && values[ 0 ] < - 85 ) {
+//            Log.i( TAG, "正西" );
+//        }
+//        else if ( values[ 0 ] >= - 85 && values[ 0 ] < - 5 ) {
+//            Log.i( TAG, "西北" );
+//        }
     }
 
     class MySensorEventListener implements SensorEventListener {
