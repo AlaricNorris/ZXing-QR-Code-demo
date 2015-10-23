@@ -48,7 +48,8 @@
 			android:layout_width = "match_parent"
 			android:layout_height = "wrap_content"
 			android:layout_gravity = "bottom"
-			android:visibility = "gone">
+			android:gravity="right"
+			android:visibility = "visible">
 
 			<ImageView
 				android:id = "@+id/image_compress"
@@ -70,7 +71,7 @@
 
 			<TextView
 				android:id = "@+id/text_compress_newAPI"
-				android:layout_width = "wrap_content"
+				android:layout_width = "100dp"
 				android:layout_height = "wrap_content"
 				android:textColor = "@android:color/black"/>
 		</LinearLayout>

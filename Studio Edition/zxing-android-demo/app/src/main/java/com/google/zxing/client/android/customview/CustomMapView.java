@@ -155,7 +155,7 @@ public class CustomMapView extends View {
     ) {
         int newX = ( int ) ( x +
                 peiceSpace * distance * Math.cos( Math.toRadians( orientation - 180 ) ) );
-        int newY = ( int ) ( y -
+        int newY = ( int ) ( y +
                 peiceSpace * distance * Math.sin( Math.toRadians( orientation - 180 ) ) );
         Log.e( "nrs", "newX" + newX );
         Log.e( "nrs", "newY" + newY );

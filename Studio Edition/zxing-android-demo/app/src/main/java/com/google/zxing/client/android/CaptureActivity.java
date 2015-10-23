@@ -93,7 +93,7 @@ public final class CaptureActivity extends Activity
 
     public static final int HISTORY_REQUEST_CODE = 0x0000bacc;
     public static final int LIGHTTOP = 260;
-    public static final int HUMANTOP = 120;
+    public static final int HUMANTOP = 110;
     public static final int delta = LIGHTTOP - HUMANTOP;
     private static final String TAG = CaptureActivity.class.getSimpleName();
     private static final long DEFAULT_INTENT_RESULT_DURATION_MS = 1500L;
@@ -797,8 +797,8 @@ public final class CaptureActivity extends Activity
 
         TextView formatTextView = ( TextView ) findViewById( R.id.format_text_view );
         formatTextView.setText( rawResult.getBarcodeFormat().toString() );
-//        if ( orientation < 0 )
-//            orientation += 360;
+        if ( orientation < 0 )
+            orientation += 360;
         formatTextView.setText( ":" + orientation );
         TextView typeTextView = ( TextView ) findViewById( R.id.type_text_view );
         typeTextView.setText( resultHandler.getType().toString() );
@@ -1098,9 +1098,9 @@ public final class CaptureActivity extends Activity
 
         values[ 0 ] += 90;
         mImageView_compress_newAPI.setRotation( - values[ 0 ] );
-        orientation = values[ 0 ];
+        orientation = values[ 0 ]-90;
         mTextView_compress_newAPI.setText(
-                "X:" + values[ 0 ] + "\n\n" + "Y:" + values[ 1 ] + "\n" + "Z:" + values[ 2 ]
+                "X:" +( values[ 0 ] -90)+ "\n\n" + "Y:" + values[ 1 ] + "\n" + "Z:" + values[ 2 ]
         );
         Log.i( TAG, values[ 0 ] + "orientation" );
 //        if ( values[ 0 ] >= - 5 && values[ 0 ] < 5 ) {
