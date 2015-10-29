@@ -557,7 +557,7 @@ public final class CaptureActivity extends Activity
             surfaceHolder.removeCallback( this );
         }
         mSensorManager.unregisterListener( listener );
-        mSensorManager.unregisterListener( mSensorLisener );
+        mSensorManager.unregisterListener(mSensorLisener);
         ;
         super.onPause();
     }
@@ -593,12 +593,12 @@ public final class CaptureActivity extends Activity
                 cameraManager.setTorch( true );
                 return true;
         }
-        return super.onKeyDown( keyCode, event );
+        return super.onKeyDown(keyCode, event);
     }
     @Override
     public boolean onCreateOptionsMenu ( Menu menu ) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate( R.menu.capture, menu );
+        menuInflater.inflate(R.menu.capture, menu);
         return super.onCreateOptionsMenu( menu );
     }
     @Override
@@ -633,8 +633,8 @@ public final class CaptureActivity extends Activity
                 historyManager != null ) {
             int itemNumber = intent.getIntExtra( Intents.History.ITEM_NUMBER, - 1 );
             if ( itemNumber >= 0 ) {
-                HistoryItem historyItem = historyManager.buildHistoryItem( itemNumber );
-                decodeOrStoreSavedBitmap( null, historyItem.getResult() );
+                HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
+                decodeOrStoreSavedBitmap(null, historyItem.getResult());
             }
         }
     }
@@ -690,7 +690,7 @@ public final class CaptureActivity extends Activity
             historyManager.addHistoryItem( rawResult, resultHandler );
             // Then not from history, so beep/vibrate and we have an image to draw on
             beepManager.playBeepSoundAndVibrate();
-            drawResultPoints( barcode, scaleFactor, rawResult );
+            drawResultPoints(barcode, scaleFactor, rawResult);
         }
 
         switch (source) {
@@ -827,9 +827,14 @@ public final class CaptureActivity extends Activity
                 metaTextViewLabel.setVisibility( View.VISIBLE );
             }
             Log.d( "nrs", "metadataText: " + displayContents );
-            mLightLocation = new Gson().fromJson(
-                    String.valueOf( displayContents ), LightLocation.class
-            );
+            try{
+
+                mLightLocation = new Gson().fromJson(
+                        String.valueOf( displayContents ), LightLocation.class
+                );
+            }catch (Exception e){
+
+            }
         }
         metaTextView.append( ":" + calculateDistance( tiltAngle ) );
         TextView offsetTextView = ( TextView ) findViewById( R.id.offset_text_view );
